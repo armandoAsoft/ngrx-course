@@ -1,5 +1,5 @@
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {NgModule, isDevMode} from '@angular/core';
 
 import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -21,6 +21,7 @@ import {RouterState, StoreRouterConnectingModule} from '@ngrx/router-store';
 import {EffectsModule} from '@ngrx/effects';
 import {EntityDataModule} from '@ngrx/data';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import * as fromMetaReducers from './reducers';
 
 
 const routes: Routes = [
@@ -48,6 +49,9 @@ const routes: Routes = [
         MatProgressSpinnerModule,
         MatListModule,
         MatToolbarModule,
-        AuthModule.forRoot()], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        AuthModule.forRoot(),
+        StoreModule.forRoot(fromMetaReducers.reducers, { metaReducers: fromMetaReducers.metaReducers }),
+        StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+        StoreModule.forFeature(fromMetaReducers.metaReducersFeatureKey, fromMetaReducers.reducers, { metaReducers: fromMetaReducers.metaReducers })], providers: [provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
 }

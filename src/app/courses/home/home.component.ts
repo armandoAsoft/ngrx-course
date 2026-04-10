@@ -17,13 +17,13 @@ import {CoursesHttpService} from '../services/courses-http.service';
 })
 export class HomeComponent implements OnInit {
 
-    promoTotal$: Observable<number>;
+    promoTotal$!: Observable<number>;
 
-    loading$: Observable<boolean>;
+    loading$!: Observable<boolean>;
 
-    beginnerCourses$: Observable<Course[]>;
+    beginnerCourses$!: Observable<Course[]>;
 
-    advancedCourses$: Observable<Course[]>;
+    advancedCourses$!: Observable<Course[]>;
 
 
     constructor(
