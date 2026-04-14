@@ -1,4 +1,5 @@
 import { isDevMode } from '@angular/core';
+import { routerReducer } from '@ngrx/router-store';
 import {
   ActionReducer,
   ActionReducerMap,
@@ -7,15 +8,21 @@ import {
   MetaReducer
 } from '@ngrx/store';
 
-export const metaReducersFeatureKey = 'metaReducers';
-
 export interface AppState {
 
 }
 
 export const reducers: ActionReducerMap<AppState> = {
-
+  router: routerReducer
 };
 
+export function logger(reducer: ActionReducer<AppState>): ActionReducer<AppState> {
+  return (state, action) => {
+    console.log('state before: ', state);
+    console.log('action: ', action);
 
-export const metaReducers: MetaReducer<AppState>[] = isDevMode() ? [] : [];
+    return reducer(state, action);
+  }
+}
+
+export const metaReducers: MetaReducer<AppState>[] = isDevMode() ? [logger] : [];

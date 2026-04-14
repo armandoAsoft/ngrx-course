@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, effect, OnInit, ViewEncapsulation } from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 import {Store} from "@ngrx/store";
@@ -7,7 +7,15 @@ import {AuthService} from "../auth.service";
 import {tap} from "rxjs/operators";
 import {noop} from "rxjs";
 import {Router} from "@angular/router";
-import { AppState } from '../reducers';
+import { login } from '../auth.actions';
+// import { AppState } from '../../reducers';
+import { AuthState } from '../reducers';
+import { selectUser } from '../auth.selector';
+import { AppState } from '../../reducers';
+
+// interface AppState {
+//     auth: AuthState
+// }
 
 @Component({
     selector: 'login',
@@ -18,6 +26,8 @@ import { AppState } from '../reducers';
 export class LoginComponent implements OnInit {
 
   form: FormGroup;
+  loggedUser = this.store.selectSignal(selectUser);
+
 
   constructor(
       private fb:FormBuilder,
@@ -30,9 +40,14 @@ export class LoginComponent implements OnInit {
           password: ['test', [Validators.required]]
       });
 
+      effect(() => {
+            console.log('Usuario en store:', this.loggedUser());
+        });
+
   }
 
   ngOnInit() {
+    
 
   }
 
@@ -42,7 +57,7 @@ export class LoginComponent implements OnInit {
     .pipe(
         tap(user => {
             console.log('user logged in', user);
-            this.store.dispatch();
+            this.store.dispatch(login({user}));
             this.router.navigateByUrl('/courses');
         })
     )

@@ -21,13 +21,15 @@ import {RouterState, StoreRouterConnectingModule} from '@ngrx/router-store';
 import {EffectsModule} from '@ngrx/effects';
 import {EntityDataModule} from '@ngrx/data';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import * as fromMetaReducers from './reducers';
+import {reducers, metaReducers} from './reducers';
+import { authGuard } from './auth/auth.guard';
 
 
 const routes: Routes = [
   {
     path: 'courses',
-    loadChildren: () => import('./courses/courses.module').then(m => m.CoursesModule)
+    loadChildren: () => import('./courses/courses.module').then(m => m.CoursesModule),
+    canActivate: [authGuard]
   },
   {
     path: '**',
@@ -50,8 +52,21 @@ const routes: Routes = [
         MatListModule,
         MatToolbarModule,
         AuthModule.forRoot(),
-        StoreModule.forRoot(fromMetaReducers.reducers, { metaReducers: fromMetaReducers.metaReducers }),
+        StoreModule.forRoot(reducers, { 
+          metaReducers,
+          runtimeChecks: {
+            strictStateImmutability: true,
+            strictActionImmutability: true,
+            strictActionSerializability: true,
+            strictStateSerializability: true,
+          }
+        }),
         StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
-        StoreModule.forFeature(fromMetaReducers.metaReducersFeatureKey, fromMetaReducers.reducers, { metaReducers: fromMetaReducers.metaReducers })], providers: [provideHttpClient(withInterceptorsFromDi())] })
+        EffectsModule.forRoot([]),
+        StoreRouterConnectingModule.forRoot({
+          stateKey: 'router',
+          routerState: RouterState.Minimal
+        })
+         ] })
 export class AppModule {
 }
