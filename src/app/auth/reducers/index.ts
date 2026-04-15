@@ -11,8 +11,8 @@ import {AuthActions} from '../action-types';
 
 
 export interface AuthState {
-    user: User
-}
+    user: User | undefined
+};
 
 export const initialAuthState: AuthState = {
     user: undefined

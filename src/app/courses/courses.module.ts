@@ -25,13 +25,16 @@ import { EntityDataService, EntityDefinitionService, EntityMetadataMap} from '@n
 import {compareCourses, Course} from './model/course';
 
 import {compareLessons, Lesson} from './model/lesson';
+import { coursesResolver } from './courses.resolver';
 
 
 export const coursesRoutes: Routes = [
   {
     path: '',
-    component: HomeComponent
-
+    component: HomeComponent,
+    resolve: {
+      courses: coursesResolver
+    }
   },
   {
     path: ':courseUrl',

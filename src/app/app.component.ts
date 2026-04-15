@@ -17,9 +17,9 @@ export class AppComponent implements OnInit {
 
     loading = true;
 
-    isLoggedIn$: Observable<boolean>;
+    isLoggedIn$!: Observable<boolean>;
 
-    isLoggedOut$: Observable<boolean>;
+    isLoggedOut$!: Observable<boolean>;
 
     constructor(private router: Router,
                 private store: Store<AppState>) {

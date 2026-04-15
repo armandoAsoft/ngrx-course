@@ -1,6 +1,7 @@
 
 
-import * as express from 'express';
+import express from 'express';
+import bodyParser from 'body-parser';
 import {Application} from "express";
 import {getAllCourses, getCourseByUrl} from "./get-courses.route";
 import {searchLessons} from "./search-lessons.route";
@@ -8,9 +9,6 @@ import {loginUser} from "./auth.route";
 import {saveCourse} from "./save-course.route";
 import {createCourse} from './create-course.route';
 import {deleteCourse} from './delete-course.route';
-
-const bodyParser = require('body-parser');
-
 
 
 const app: Application = express();
