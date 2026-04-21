@@ -1,4 +1,4 @@
-import {Component, inject, Inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
 import {Course} from '../model/course';
 import {UntypedFormBuilder, UntypedFormGroup, Validators} from '@angular/forms';
@@ -7,16 +7,19 @@ import {CoursesHttpService} from '../services/courses-http.service';
 import { Store } from '@ngrx/store';
 import { Update } from '@ngrx/entity';
 import { courseUpdated } from '../course.actions';
+import { CourseEntityService } from '../services/course-entity.service';
 
 @Component({
     selector: 'course-dialog',
     templateUrl: './edit-course-dialog.component.html',
     styleUrls: ['./edit-course-dialog.component.css'],
-    standalone: false
+    standalone: false,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditCourseDialogComponent {
   private store = inject(Store);
   private data = inject(MAT_DIALOG_DATA);
+  private coursesService = inject(CourseEntityService);
 
   form!: UntypedFormGroup;
 
@@ -71,14 +74,23 @@ export class EditCourseDialogComponent {
     //   .subscribe(
     //     () => this.dialogRef.close()
     //   )
-    const update: Update<Course> = {
-      id: course.id,
-      changes: course
-    };
 
-    this.store.dispatch(courseUpdated({ update }));
+    // const update: Update<Course> = {
+    //   id: course.id,
+    //   changes: course
+    // };
 
-    this.dialogRef.close();
+    // this.store.dispatch(courseUpdated({ update }));
+
+    if (this.mode == 'update') {
+      this.coursesService.update(course);
+      this.dialogRef.close();
+    } else if (this.mode == 'create') {
+      this.coursesService.add(course).subscribe(
+        () => this.dialogRef.close()
+      );
+    }
+    
   }
 
 

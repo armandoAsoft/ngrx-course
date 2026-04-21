@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {compareCourses, Course} from '../model/course';
 import {Observable} from "rxjs";
 import {defaultDialogConfig} from '../shared/default-dialog-config';
@@ -8,6 +8,7 @@ import {map, shareReplay} from 'rxjs/operators';
 import {CoursesHttpService} from '../services/courses-http.service';
 import { select, Store } from '@ngrx/store';
 import { selectAdvancedCourses, selectBegginerCourses, selectpromoTotal } from '../courses.selectors';
+import { CourseEntityService } from '../services/course-entity.service';
 
 
 
@@ -15,11 +16,13 @@ import { selectAdvancedCourses, selectBegginerCourses, selectpromoTotal } from '
     selector: 'home',
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.css'],
-    standalone: false
+    standalone: false,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit {
 
   private store = inject(Store);
+  private coursesService = inject(CourseEntityService)
     promoTotal$!: Observable<number>;
 
     // loading$: Observable<boolean>;
@@ -40,11 +43,23 @@ export class HomeComponent implements OnInit {
 
   reload() {
 
-    this.beginnerCourses$ = this.store.pipe(select(selectBegginerCourses));
+    this.beginnerCourses$ = this.coursesService.entities$.pipe(
+      map(courses => courses.filter(course => course.category == 'BEGINNER'))
+    );
 
-    this.advancedCourses$ = this.store.pipe(select(selectAdvancedCourses));
+    this.advancedCourses$ = this.coursesService.entities$.pipe(
+      map(courses => courses.filter(course => course.category == 'ADVANCED'))
+    );
 
-    this.promoTotal$ = this.store.pipe(select(selectpromoTotal));
+    this.promoTotal$ = this.coursesService.entities$.pipe(
+      map(courses => courses.filter(course => course.promo).length)
+    );
+
+    // this.beginnerCourses$ = this.store.pipe(select(selectBegginerCourses));
+
+    // this.advancedCourses$ = this.store.pipe(select(selectAdvancedCourses));
+
+    // this.promoTotal$ = this.store.pipe(select(selectpromoTotal));
 
   }
 

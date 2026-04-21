@@ -18,7 +18,7 @@ export class CoursesHttpService {
     findAllCourses(): Observable<Course[]> {
         return this.http.get('/api/courses')
             .pipe(
-                map(res => res['payload'])
+                map((res: any) => res['payload'])
             );
     }
 
